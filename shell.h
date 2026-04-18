@@ -14,6 +14,8 @@
 /*
  *  Prototype Functions
  */
+char **get_tokens(char *line);
+void shell_exec(char **args, char **argv, char **env);
 
 
 #endif

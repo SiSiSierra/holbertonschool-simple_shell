@@ -49,6 +49,8 @@ void shell_exec(char **args, char **argv, char **env)
 	child_pid = fork();
 	if (child_pid == 0)
 	{
+		if (args == NULL)
+			_exit(0);
 		execve(args[0], args, env);
 		if (args[0] == NULL)
 		{
@@ -62,6 +64,43 @@ void shell_exec(char **args, char **argv, char **env)
 		wait(NULL);
 	}
 }
+/**
+ * shell_interactive - Use the shell as a command line
+ * @argv: Array of arguments from command line
+ * @env: Array of environment variables
+ * Return: 1 if finished, 0 if to continue
+ */
+int shell_interactive(char **argv, char **env)
+{
+	char *line;
+	size_t bufsize;
+	char **args;
+	int loop = 0;
+
+	if (isatty(STDIN_FILENO))
+	{
+		printf("#cisfun$ ");
+		fflush(stdout);
+	}
+	getline(&line, &bufsize, stdin);
+	if (feof(stdin))
+	{
+		printf("EOF\n");
+		loop = 1;
+	}
+	line[strcspn(line, "\n")] = '\0';
+	if (loop != 1)
+		args = get_tokens(line);
+	else
+		args = NULL;
+	shell_exec(args, argv, env);
+	free(line);
+	line = NULL;
+	if (loop != 1)
+		free(args);
+	return (loop);
+}
+
 
 /**
  * main - entry point
@@ -73,44 +112,12 @@ void shell_exec(char **args, char **argv, char **env)
  */
 int main(int argc, char **argv, char **env)
 {
-	char *line;
-	size_t bufsize;
-	char **args;
-	int args_len, loop = 0;
-
-	(void)argc;
-	while (loop != 1)
+	if (argc > 1)
+		shell_exec(&(argv[1]), argv, env);
+	else
 	{
-		if (isatty(STDIN_FILENO))
-		{
-			printf("#cisfun$ ");
-			fflush(stdout);
-		}
-		getline(&line, &bufsize, stdin);
-		if (feof(stdin))
-		{
-			printf("EOF\n");
-			loop = 1;
-		}
-		line[strcspn(line, "\n")] = '\0';
-		if (loop != 1)
-		{
-			args = get_tokens(line);
-			args_len = 0;
-			while (args[args_len])
-			{
-			args_len++;
-			}
-		}
-		else
-		{
-			args[0] = NULL;
-		}
-		shell_exec(args, argv, env);
-		free(line);
-		line = NULL;
-		if (loop != 1)
-			free(args);
+		while (shell_interactive(argv, env) != 1)
+		{}
 	}
 	return (EXIT_SUCCESS);
 }

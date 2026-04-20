@@ -35,3 +35,39 @@ char *get_path(char **env)
 	free(temp);
 	return (path_dirs_cp);
 }
+
+/**
+ * get_path_directories - split the PATH string into an array of strings with
+ * each directory as their own entry
+ * @path: path string to split
+ *
+ * Return: Array of directories from PATH
+ */
+char **get_path_directories(char *path)
+{
+	char **path_dirs;
+	char *dir;
+	char *temp = strdup(path);
+	int idx = 0;
+
+	dir = strtok(temp, ":");
+	while (dir != NULL)
+	{
+		idx++;
+		dir = strtok(NULL, ":");
+	}
+	free(temp);
+	path_dirs = malloc((idx + 1) * sizeof(*path_dirs));
+	if (!path_dirs)
+	{
+		return (NULL);
+	}
+	i = 0;
+	for (dir = strtok(path, ":"); dir; dir = strtok(NULL, ":"))
+	{
+	path_dirs[i] = dir;
+		idx++;
+	}
+	path_dirs[idx] = NULL;
+	return (path_dirs);
+}

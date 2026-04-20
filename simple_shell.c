@@ -11,28 +11,28 @@ char **get_tokens(char *line)
 	char **args;
 	char *token;
 	char *str = strdup(line);
-	int idx = 0;
+	int i = 0;
 
 	token = strtok(str, " ");
 	while (token != NULL)
 	{
-		idx++;
+		i++;
 		token = strtok(NULL, " ");
 	}
 	free(str);
 
-	args = malloc((idx + 1) * sizeof(*args));
+	args = malloc((i + 1) * sizeof(*args));
 	if (!args)
 	{
 		return (NULL);
 	}
-	idx = 0;
+	i = 0;
 	for (token = strtok(line, " "); token; token = strtok(NULL, " "))
 	{
-		args[idx] = token;
-		idx++;
+		args[i] = token;
+		i++;
 	}
-	args[idx] = NULL;
+	args[i] = NULL;
 	return (args);
 }
 
@@ -42,27 +42,34 @@ char **get_tokens(char *line)
  * @argv: arguments from command line
  * @env: environment variables
  */
-void shell_exec(char **args, char **argv, char **env)
+void shell_exec(char **args, char **argv, char **env, char **path_directories)
 {
+	int flag = 0;
+	char *full_name = check_arg(args, path_directories, &flag);
 	pid_t child_pid;
 
-	child_pid = fork();
-	if (child_pid == 0)
+	if (flag != -1)
 	{
-		if (args == NULL)
-			_exit(0);
-		execve(args[0], args, env);
-		if (args[0] == NULL)
+		child_pid = fork();
+		if (child_pid == 0)
 		{
-			printf("%s\n", args[0]);
+			if (args == NULL)
+				_exit(0);
+			execve(full_name, args, env);
+			if (args[0] == NULL)
+			{
+				printf("%s\n", args[0]);
+			}
+			printf("%s: No such file or directory\n", argv[0]);
+			_exit(0);
 		}
-		printf("%s: No such file or directory\n", argv[0]);
-		_exit(0);
+		else
+		{
+			wait(NULL);
+		}
 	}
-	else
-	{
-		wait(NULL);
-	}
+	if (flag == 1)
+		free(full_name);
 }
 /**
  * shell_interactive - Use the shell as a command line
@@ -70,7 +77,7 @@ void shell_exec(char **args, char **argv, char **env)
  * @env: Array of environment variables
  * Return: 1 if finished, 0 if to continue
  */
-int shell_interactive(char **argv, char **env)
+int shell_interactive(char **argv, char **env, char **path_directories)
 {
 	char *line;
 	size_t bufsize;
@@ -93,7 +100,8 @@ int shell_interactive(char **argv, char **env)
 		args = get_tokens(line);
 	else
 		args = NULL;
-	shell_exec(args, argv, env);
+
+	shell_exec(args, argv, env, path_directories);
 	free(line);
 	line = NULL;
 	if (loop != 1)
@@ -112,12 +120,17 @@ int shell_interactive(char **argv, char **env)
  */
 int main(int argc, char **argv, char **env)
 {
+	char *path = get_path(env);
+	char **path_directories = get_path_directories(path);
+
 	if (argc > 1)
-		shell_exec(&(argv[1]), argv, env);
+		shell_exec(&(argv[1]), argv, env, path_directories);
 	else
 	{
-		while (shell_interactive(argv, env) != 1)
+		while (shell_interactive(argv, env, path_directories) != 1)
 		{}
 	}
+	free(path);
+	free(path_directories);
 	return (EXIT_SUCCESS);
 }

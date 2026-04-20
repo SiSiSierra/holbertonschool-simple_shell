@@ -15,7 +15,7 @@
  *  Prototype Functions
  */
 char **get_tokens(char *line);
-void shell_exec(char **args, char **argv, char **env);
+void shell_exec(char **args, char **argv, char **env, char **path_directories);
 char *get_path(char **env);
 char **get_path_directories(char *path);
 char *check_arg(char **args, char **path_directories, int *flag);

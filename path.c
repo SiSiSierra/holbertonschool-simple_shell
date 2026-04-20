@@ -124,9 +124,7 @@ char *check_arg(char **args, char **path_directories, int *flag)
 	{
 		while (path_directories != NULL && path_directories[i])
 		{
-			printf("test\n");
 			temp = strcat3(path_directories[i], "/", args[0]);
-			printf("temp = %s\n", temp);
 			if (stat(temp, &test) == 0)
 			{
 				*flag = 1;

@@ -20,5 +20,6 @@ char *get_path(char **env);
 char **get_path_directories(char *path);
 char *check_arg(char **args, char **path_directories, int *flag);
 char *strcat3(char *a, char *b, char *c);
+int die(char **args);
 
 #endif

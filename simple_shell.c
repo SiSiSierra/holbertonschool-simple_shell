@@ -71,6 +71,24 @@ void shell_exec(char **args, char **argv, char **env, char **path_directories)
 	if (flag == 1)
 		free(full_name);
 }
+
+
+int die(char **args)
+{
+	if (args == NULL || args [0] == NULL)
+	{
+		printf("Error\n");
+		return (1);
+	}
+	else if (strcmp(args[0], "exit") == 0)
+	{
+		printf("Shell ending\n");
+		exit (0);
+	}
+	return (0);
+}
+
+
 /**
  * shell_interactive - Use the shell as a command line
  * @argv: Array of arguments from command line
@@ -100,6 +118,8 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 		args = get_tokens(line);
 	else
 		args = NULL;
+
+	die(args);
 
 	shell_exec(args, argv, env, path_directories);
 	free(line);

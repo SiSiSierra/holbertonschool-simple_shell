@@ -1,0 +1,71 @@
+.TH "SIMPLE_SHELL" 1 "22/4/2026" "1.0" "User Commands"
+.SH NAME
+simple_shell \- Navigate and run programs within an environment via a shell
+.SH SYNOPSIS
+
+simple_shell <...>
+
+<...>: Any commands to run via the shell and exit without entering interactive mode
+.SH DESCRIPTION
+Running the program with no arguments will enter an interactive mode to run commands and navigate a given computer environment using a custom shell. It will continue accepting inputs until the shell is exited. Running the program with arguments will attempt to execute given commands instantly and exit. Programs and commands from the current directory or the PATH can be run as they are in other standard shells by invoking their name, and their output if applicable will be printed within the shell.
+
+.SH OPTIONS
+.TP
+.SH Before running program:
+.RS
+.B simple_shell (no arguments)
+ Run in interactive mode
+
+.RE
+.RS
+.B simple_shell [...]
+ Run given commands via shell and exit
+
+.RE
+.TP
+.SH In interactive mode:
+.RS
+.B env
+ Print all current environment variables, and ask for another input
+
+.RE
+.RS
+.B exit
+ Exit the shell
+
+.RE
+.RS
+.B [...]
+ Attempt to run the given commands and their arguments, print their output, and ask for another input.
+
+.RE
+.SH EXAMPLES
+.TP
+.SH Non-interactive
+.RS
+.B Execute "ls"
+ simple_shell ls
+
+.RE
+.RS
+.B Execute "echo" with arguments
+ simple_shell echo "Hello"
+
+.RS
+.TP
+.SH Interactive
+.RS
+.B Execute "ls"
+ ls
+
+.RE
+.RS
+.B Execute "echo" with arguments
+ echo "Hello"
+.RE
+.SH AUTHORS
+Aaron Regterschot
+.sp
+Sierra Hunt
+.sp
+Trevor Huynh

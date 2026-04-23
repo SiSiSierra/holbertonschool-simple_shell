@@ -80,8 +80,8 @@ void shell_exec(char **args, char **argv, char **env, char **path_directories)
  */
 int shell_interactive(char **argv, char **env, char **path_directories)
 {
-	char *line;
-	size_t bufsize;
+	char *line = NULL;
+	size_t bufsize = 0;
 	char **args;
 	int loop = 0;
 

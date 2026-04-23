@@ -90,8 +90,7 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 		printf("#cisfun$ ");
 		fflush(stdout);
 	}
-	getline(&line, &bufsize, stdin);
-	if (feof(stdin))
+	if(getline(&line, &bufsize, stdin) == -1)
 	{
 		free(line);
 		return (1);

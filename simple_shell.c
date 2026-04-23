@@ -105,6 +105,7 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 		return (1);
 	}
 	shell_exec(args, argv, env, path_directories);
+	free(args);
 	return (loop);
 }
 

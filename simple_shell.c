@@ -72,23 +72,6 @@ void shell_exec(char **args, char **argv, char **env, char **path_directories)
 		free(full_name);
 }
 
-
-int die(char **args)
-{
-	if (args == NULL || args [0] == NULL)
-	{
-		printf("Error\n");
-		return (1);
-	}
-	else if (strcmp(args[0], "exit") == 0)
-	{
-		printf("Shell ending\n");
-		exit (0);
-	}
-	return (0);
-}
-
-
 /**
  * shell_interactive - Use the shell as a command line
  * @argv: Array of arguments from command line
@@ -110,22 +93,19 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 	getline(&line, &bufsize, stdin);
 	if (feof(stdin))
 	{
-		printf("EOF\n");
-		loop = 1;
+		free(line);
+		return (1);
 	}
 	line[strcspn(line, "\n")] = '\0';
-	if (loop != 1)
-		args = get_tokens(line);
-	else
-		args = NULL;
-
-	die(args);
-
-	shell_exec(args, argv, env, path_directories);
-	free(line);
-	line = NULL;
-	if (loop != 1)
+	args = get_tokens(line);
+	if (strcmp(args[0], "exit") == 0)
+	{
+		printf("Shell ending\n");
 		free(args);
+		free(line);
+		return (1);
+	}
+	shell_exec(args, argv, env, path_directories);
 	return (loop);
 }
 
@@ -144,7 +124,9 @@ int main(int argc, char **argv, char **env)
 	char **path_directories = get_path_directories(path);
 
 	if (argc > 1)
+	{
 		shell_exec(&(argv[1]), argv, env, path_directories);
+	}
 	else
 	{
 		while (shell_interactive(argv, env, path_directories) != 1)

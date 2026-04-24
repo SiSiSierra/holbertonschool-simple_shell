@@ -107,9 +107,7 @@ char *check_arg(char **args, char **path_directories, int *flag)
 	struct stat test;
 
 	if (args == NULL)
-	{
 		return (NULL);
-	}
 	if (*args[0] == '/' || *args[0] == '.')
 	{
 		if (stat(args[0], &test) == 0)

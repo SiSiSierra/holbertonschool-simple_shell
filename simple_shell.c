@@ -41,6 +41,7 @@ char **get_tokens(char *line)
  * @args: arguments to run with execve
  * @argv: arguments from command line
  * @env: environment variables
+ * @path_directories: Array of strings with all directories from PATH
  */
 void shell_exec(char **args, char **argv, char **env, char **path_directories)
 {
@@ -79,6 +80,7 @@ void shell_exec(char **args, char **argv, char **env, char **path_directories)
  * shell_interactive - Use the shell as a command line
  * @argv: Array of arguments from command line
  * @env: Array of environment variables
+ * @path_directories: Array of strings with all directories from PATH
  * Return: 1 if finished, 0 if to continue
  */
 int shell_interactive(char **argv, char **env, char **path_directories)
@@ -94,7 +96,7 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 		printf("#cisfun$ ");
 		fflush(stdout);
 	}
-	if(getline(&line, &bufsize, stdin) == -1)
+	if (getline(&line, &bufsize, stdin) == -1)
 	{
 		free(line);
 		return (1);
@@ -113,7 +115,7 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 	}
 	shell_exec(args, argv, env, path_directories);
 	free_args(args, args_len);
-	
+
 	return (loop);
 }
 

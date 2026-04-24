@@ -27,10 +27,12 @@ char **get_tokens(char *line)
 		return (NULL);
 	}
 	i = 0;
-	for (token = strtok(line, " "); token; token = strtok(NULL, " "))
+	token = strtok(line, " ");
+	while (token != NULL)
 	{
 		args[i] = token;
 		i++;
+		token = strtok(NULL, " ");
 	}
 	args[i] = NULL;
 	return (args);

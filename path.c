@@ -118,7 +118,10 @@ char *check_arg(char **args, char **path_directories, int *flag)
 			return (args[0]);
 		}
 		else
+		{
+			*flag = -1;
 			return (NULL);
+		}
 	}
 	else
 	{

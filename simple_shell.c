@@ -60,7 +60,6 @@ void shell_exec(char **args, char **argv, char **env, char **path_directories)
 			{
 				printf("%s\n", args[0]);
 			}
-			printf("%s: No such file or directory\n", argv[0]);
 			_exit(0);
 		}
 		else
@@ -68,8 +67,12 @@ void shell_exec(char **args, char **argv, char **env, char **path_directories)
 			wait(NULL);
 		}
 	}
+	else
+		printf("%s: No such file or directory\n", argv[0]);
 	if (flag == 1)
+	{
 		free(full_name);
+	}
 }
 
 /**
@@ -83,6 +86,7 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 	char *line = NULL;
 	size_t bufsize = 0;
 	char **args;
+	int args_len;
 	int loop = 0;
 
 	if (isatty(STDIN_FILENO))
@@ -97,6 +101,9 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 	}
 	line[strcspn(line, "\n")] = '\0';
 	args = get_tokens(line);
+	args_len = 0;
+	while (args[args_len])
+		args_len++;
 	if (strcmp(args[0], "exit") == 0)
 	{
 		printf("Shell ending\n");
@@ -105,7 +112,8 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 		return (1);
 	}
 	shell_exec(args, argv, env, path_directories);
-	free(args);
+	free_args(args, args_len);
+	
 	return (loop);
 }
 

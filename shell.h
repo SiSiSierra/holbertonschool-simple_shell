@@ -22,5 +22,7 @@ char *check_arg(char **args, char **path_directories, int *flag);
 char *strcat3(char *a, char *b, char *c);
 int die(char **args);
 void free_args(char **args, int length);
+int get_arr_len(char **arr);
+int check_all_whitespace(char *line);
 
 #endif

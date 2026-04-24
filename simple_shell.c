@@ -8,16 +8,16 @@
  */
 char **get_tokens(char *line)
 {
-	char **args;
-	char *token;
+	char **args = NULL;
+	char *token = NULL;
 	char *str = strdup(line);
 	int i = 0;
 
-	token = strtok(str, " ");
+	token = strtok(str, " \n");
 	while (token != NULL)
 	{
 		i++;
-		token = strtok(NULL, " ");
+		token = strtok(NULL, " \n");
 	}
 	free(str);
 
@@ -27,12 +27,12 @@ char **get_tokens(char *line)
 		return (NULL);
 	}
 	i = 0;
-	token = strtok(line, " ");
+	token = strtok(line, " \n");
 	while (token != NULL)
 	{
 		args[i] = token;
 		i++;
-		token = strtok(NULL, " ");
+		token = strtok(NULL, " \n");
 	}
 	args[i] = NULL;
 	return (args);
@@ -89,35 +89,46 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 {
 	char *line = NULL;
 	size_t bufsize = 0;
-	char **args;
-	int args_len;
-	int loop = 0;
+	char **args = NULL;
+	int args_len = 0, read, i, loop = 0;
 
 	if (isatty(STDIN_FILENO))
 	{
 		printf("#cisfun$ ");
 		fflush(stdout);
 	}
-	if (getline(&line, &bufsize, stdin) == -1)
+	read = getline(&line, &bufsize, stdin);
+	if (read > 1 && line[read - 1] == '\n')
+		line[read - 1] = '\0';
+	if (read == -1)
 	{
 		free(line);
 		return (1);
 	}
-	line[strcspn(line, "\n")] = '\0';
+	if (check_all_whitespace(line) == 1)
+	{
+		free(line);
+		return (loop);
+	}
 	args = get_tokens(line);
-	args_len = 0;
-	while (args[args_len])
-		args_len++;
+	args_len = get_arr_len(args);
 	if (strcmp(args[0], "exit") == 0)
 	{
 		printf("Shell ending\n");
 		free(args);
 		free(line);
+		bufsize = 0;
 		return (1);
 	}
 	shell_exec(args, argv, env, path_directories);
-	free_args(args, args_len);
-
+	i = 0;
+	while (i < args_len)
+	{
+		free(args[args_len]);
+		i++;
+	}
+	free(args);
+	free(line);
 	return (loop);
 }
 

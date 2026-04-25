@@ -100,21 +100,15 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 	read = getline(&line, &bufsize, stdin);
 	if (read > 1 && line[read - 1] == '\n')
 		line[read - 1] = '\0';
-	if (read == -1)
+	if (read == -1 || check_all_whitespace(line) == 1)
 	{
 		free(line);
 		return (1);
-	}
-	if (check_all_whitespace(line) == 1)
-	{
-		free(line);
-		return (loop);
 	}
 	args = get_tokens(line);
 	args_len = get_arr_len(args);
 	if (strcmp(args[0], "exit") == 0)
 	{
-		printf("Shell ending\n");
 		free(args);
 		free(line);
 		bufsize = 0;

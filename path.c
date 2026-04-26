@@ -47,9 +47,17 @@ char **get_path_directories(char *path)
 {
 	char **path_dirs;
 	char *dir;
-	char *temp = strdup(path);
+	char *temp;
 	int i = 0;
 
+	if (path != NULL)
+	{
+		temp = strdup(path);
+	}
+	else
+	{
+		return (NULL);
+	}
 	dir = strtok(temp, ":");
 	while (dir != NULL)
 	{

@@ -44,12 +44,14 @@ char **get_tokens(char *line)
  * @argv: arguments from command line
  * @env: environment variables
  * @path_directories: Array of strings with all directories from PATH
+ * @status: status to return at the end of the shell
  */
-void shell_exec(char **args, char **argv, char **env, char **path_directories)
+void shell_exec(char **args, char **argv, char **env, char **path_directories, int *status)
 {
 	int flag = 0;
 	char *full_name = check_arg(args, path_directories, &flag);
 	pid_t child_pid;
+	int child_status = 0;
 
 	if (flag != -1)
 	{
@@ -67,15 +69,21 @@ void shell_exec(char **args, char **argv, char **env, char **path_directories)
 		}
 		else
 		{
-			wait(NULL);
+			wait(&child_status);
 		}
+		*status = 0;
 	}
 	else
+	{
 		fprintf(stderr, "%s: No such file or directory\n", argv[0]);
+		*status = 2;
+	}
 	if (flag == 1)
 	{
 		free(full_name);
 	}
+	if (WIFEXITED(child_status))
+		*status = WEXITSTATUS(child_status);
 }
 
 /**
@@ -96,9 +104,10 @@ void prompt(char *msg)
  * @argv: Array of arguments from command line
  * @env: Array of environment variables
  * @path_directories: Array of strings with all directories from PATH
+ * @status: status to return after finishing interactive mode
  * Return: 1 if finished, 0 if to continue
  */
-int shell_interactive(char **argv, char **env, char **path_directories)
+int shell_interactive(char **argv, char **env, char **path_directories, int *status)
 {
 	char *line = NULL;
 	size_t bufsize = 0;
@@ -129,7 +138,7 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 		print_env(env);
 		return(loop);
 	}
-	shell_exec(args, argv, env, path_directories);
+	shell_exec(args, argv, env, path_directories, status);
 	i = 0;
 	while (i < args_len)
 	{
@@ -154,17 +163,18 @@ int main(int argc, char **argv, char **env)
 {
 	char *path = get_path(env);
 	char **path_directories = get_path_directories(path);
+	int status = 0;
 
 	if (argc > 1)
 	{
-		shell_exec(&(argv[1]), argv, env, path_directories);
+		shell_exec(&(argv[1]), argv, env, path_directories, &status);
 	}
 	else
 	{
-		while (shell_interactive(argv, env, path_directories) != 1)
+		while (shell_interactive(argv, env, path_directories, &status) != 1)
 		{}
 	}
 	free(path);
 	free(path_directories);
-	return (EXIT_SUCCESS);
+	return (status);
 }

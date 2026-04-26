@@ -71,7 +71,7 @@ void shell_exec(char **args, char **argv, char **env, char **path_directories)
 		}
 	}
 	else
-		printf("%s: No such file or directory\n", argv[0]);
+		fprintf(stderr, "%s: No such file or directory\n", argv[0]);
 	if (flag == 1)
 	{
 		free(full_name);

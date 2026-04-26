@@ -79,6 +79,19 @@ void shell_exec(char **args, char **argv, char **env, char **path_directories)
 }
 
 /**
+ * prompt - prints out the prompt for shell
+ * @msg: message to print out for the prompt
+ */
+void prompt(char *msg)
+{
+	if (isatty(STDIN_FILENO))
+	{
+		printf("%s", msg);
+		fflush(stdout);
+	}
+}
+
+/**
  * shell_interactive - Use the shell as a command line
  * @argv: Array of arguments from command line
  * @env: Array of environment variables
@@ -92,11 +105,7 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 	char **args = NULL;
 	int args_len = 0, read, i, loop = 0;
 
-	if (isatty(STDIN_FILENO))
-	{
-		printf("#cisfun$ ");
-		fflush(stdout);
-	}
+	prompt("#cisfun$ ");
 	read = getline(&line, &bufsize, stdin);
 	if (read > 1 && line[read - 1] == '\n')
 		line[read - 1] = '\0';
@@ -111,8 +120,14 @@ int shell_interactive(char **argv, char **env, char **path_directories)
 	{
 		free(args);
 		free(line);
-		bufsize = 0;
 		return (1);
+	}
+	if (strcmp(args[0], "env") == 0)
+	{
+		free(args);
+		free(line);
+		print_env(env);
+		return(loop);
 	}
 	shell_exec(args, argv, env, path_directories);
 	i = 0;

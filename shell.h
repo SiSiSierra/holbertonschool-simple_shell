@@ -24,5 +24,7 @@ int die(char **args);
 void free_args(char **args, int length);
 int get_arr_len(char **arr);
 int check_all_whitespace(char *line);
+void print_env(char **env);
+void prompt(char *msg);
 
 #endif
